@@ -1,7 +1,5 @@
-import datetime
 import os
 import sys
-from abc import ABCMeta, abstractmethod
 from collections import deque
 
 
@@ -11,22 +9,22 @@ class Event:
     Inherit this class to prepare specific event structures for various logs.
 
     Attributes:
-    - `date`: `datetime.date`
-    - `time`: `datetime.time`
+    - `timestamp`: `int`
     - `hostname`: `str`
     - `process`: `str`
     - `pid`: `int`
     - `action`: `str`
+    - `raw_content`: `str`
     """
 
     def __init__(self, **kwargs) -> None:
         _defaults = {
-            "date": None,
-            "time": None,
+            "timestamp": None,
             "hostname": os.uname().nodename,
             "process": None,
             "pid": None,
             "action": None,
+            "raw_content": None,
         }
 
         for attr, def_value in _defaults.items():
@@ -37,7 +35,7 @@ class Event:
         return "{\n\t" + "\n\t".join(_obj_state) + "}"
 
 
-class Parser(ABCMeta):
+class Parser:
     """
     Base class for all parsers. Initialization requires the absolute path
     to the log file to be parsed.
@@ -72,24 +70,12 @@ class Parser(ABCMeta):
         _data = list(map(lambda l: l.decode("utf-8").strip(), _data))
         self.events.extend(list(map(lambda e: self._parse_event(e), _data)))
 
-    @abstractmethod
     def run(self) -> None:
         """Run the parser."""
+        self.read_file()
 
-    @abstractmethod
     def _parse_event(self, __event: str) -> Event:
         """
         Parse the event string and return an instance of `Event`.
         """
-
-    @abstractmethod
-    def _parse_date(self, __date: str) -> datetime.date:
-        """
-        Parse date in string format and return a `datetime.date` instance.
-        """
-
-    @abstractmethod
-    def _parse_time(self, __time: str) -> datetime.time:
-        """
-        Parse time in string format and return a `datetime.time` instance.
-        """
+        return NotImplementedError("Must implement event parsing function")
