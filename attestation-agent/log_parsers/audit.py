@@ -2,11 +2,13 @@ import re
 
 from log_parsers.base import Event, Parser
 
+from .. import AUDIT_LOG
+
 
 class AuditEvent(Event):
     """Event logged by `auditd`"""
 
-    log_file = "/var/log/audit/audit.log"
+    log_file = AUDIT_LOG
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)

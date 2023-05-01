@@ -3,11 +3,14 @@ import datetime
 from log_parsers.base import Event, Parser
 from log_parsers.utils import MONTHS
 
+from .. import AUTH_LOG
+
 
 class AuthEvent(Event):
     """Event logged in `auth.log`"""
 
-    log_file = "/var/log/auth.log"
+    log_file = AUTH_LOG
+    type = "AUTH"
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
