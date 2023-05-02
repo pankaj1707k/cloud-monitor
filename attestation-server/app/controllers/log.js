@@ -44,6 +44,26 @@ const add_logs = async (req, res) => {
 };
 
 const get_logs = async (req, res) => {
+    // To fetch specific log by ID
+    const { id } = req.query;
+
+    if (id != undefined && id != null && id != "") {
+        try {
+            var log = await Log.findByPk(id);
+
+            if (log == null) {
+                return response_400(res, "No log found!");
+            }
+        } catch (err) {
+            return response_500(
+                res,
+                `Error while fetching log. ${err.message}`
+            );
+        }
+
+        return response_200(res, "Log fetched successfully!", log);
+    }
+
     const {
         // To find logs specific to a device
         machine_id,
@@ -127,7 +147,7 @@ const remove_logs = async (req, res) => {
     }
 
     try {
-        const log = await Log.destroy({
+        await Log.destroy({
             where: {
                 id: {
                     [Op.in]: data,

@@ -29,7 +29,7 @@ const add_events = async (req, res) => {
                 timestamp
             } = e;
 
-            const log = await Event.create({
+            const event = await Event.create({
                 machine_id,
                 content,
                 type,
@@ -37,18 +37,38 @@ const add_events = async (req, res) => {
             });
         }
     } catch (err) {
-        return response_500(res, `Error while saving logs. ${err.message}`);
+        return response_500(res, `Error while saving events. ${err.message}`);
     }
 
-    return response_201(res, "Logs saved successfully!");
+    return response_201(res, "Events saved successfully!");
 };
 
 const get_events = async (req, res) => {
+    // To fetch specific event by ID
+    const { id } = req.query;
+
+    if (id != undefined && id != null && id != "") {
+        try {
+            var event = await Event.findByPk(id);
+
+            if (event == null) {
+                return response_400(res, "No event found!");
+            }
+        } catch (err) {
+            return response_500(
+                res,
+                `Error while fetching event. ${err.message}`
+            );
+        }
+
+        return response_200(res, "Event fetched successfully!", event);
+    }
+
     const {
-        // To find logs specific to a device
+        // To find events specific to a device
         machine_id,
 
-        // To find logs within specific time range
+        // To find events within specific time range
         min_timestamp,
         max_timestamp,
     } = req.query;
@@ -73,12 +93,12 @@ const get_events = async (req, res) => {
     const query = {
         where: {
             [Op.and]: {
-                // To find logs specific to a device
+                // To find events specific to a device
                 ...(machine_id && {
                     machine_id,
                 }),
 
-                // To find logs within specific time range
+                // To find events within specific time range
                 ...((min_timestamp || max_timestamp) && {
                     timestamp: {
                         ...(min_timestamp && {
@@ -106,13 +126,13 @@ const get_events = async (req, res) => {
         var data = await Event.findAll(query);
 
         if (data == null || data == []) {
-            return response_400(res, "No logs found!");
+            return response_400(res, "No events found!");
         }
     } catch (err) {
-        return response_500(res, `Error while fetching logs. ${err.message}`);
+        return response_500(res, `Error while fetching events. ${err.message}`);
     }
 
-    return response_200(res, "Logs fetched successfully!", data);
+    return response_200(res, "Events fetched successfully!", data);
 };
 
 const remove_events = async (req, res) => {
@@ -127,7 +147,7 @@ const remove_events = async (req, res) => {
     }
 
     try {
-        const log = await Event.destroy({
+        await Event.destroy({
             where: {
                 id: {
                     [Op.in]: data,
@@ -135,10 +155,10 @@ const remove_events = async (req, res) => {
             },
         });
     } catch (err) {
-        return response_500(res, `Error while removing logs. ${err.message}`);
+        return response_500(res, `Error while removing events. ${err.message}`);
     }
 
-    return response_201(res, "Logs removed successfully!");
+    return response_201(res, "Events removed successfully!");
 };
 
 module.exports = {

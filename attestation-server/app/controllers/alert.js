@@ -46,7 +46,7 @@ const get_alerts = async (req, res) => {
     // To fetch specific alert by ID
     const { id } = req.query;
 
-    if (id != null || id != "") {
+    if (id != undefined && id != null && id != "") {
         try {
             var alert = await Alert.findByPk(id);
 
