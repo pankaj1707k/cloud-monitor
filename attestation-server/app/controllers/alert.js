@@ -9,37 +9,27 @@ const {
     response_500,
 } = require("../utils/response_codes");
 
-const add_alerts = async (req, res) => {
+const add_alert = async (req, res) => {
     const data = req.body;
 
     if (data == null || data == "") {
         return response_400(res, "Didn't receive any data.");
     }
 
-    if (!Array.isArray(data)) {
-        return response_400(
-            res,
-            "Expected data to be an 'Array', got something else."
-        );
-    }
-
     try {
-        for (let e of data) {
-            const { machine_id, subject, reason, type, timestamp } = e;
-
-            const alert = await Alert.create({
-                machine_id,
-                subject,
-                reason,
-                type,
-                timestamp,
-            });
-        }
+        const { machine_id, subject, reason, type, timestamp } = data;
+        const alert = await Alert.create({
+            machine_id,
+            subject,
+            reason,
+            type,
+            timestamp,
+        });
     } catch (err) {
-        return response_500(res, `Error while saving alerts. ${err.message}`);
+        return response_500(res, `Error while saving alert. ${err.message}`);
     }
 
-    return response_201(res, "Alerts saved successfully!");
+    return response_201(res, "Alert saved successfully!");
 };
 
 const get_alerts = async (req, res) => {
@@ -164,7 +154,7 @@ const remove_alerts = async (req, res) => {
 };
 
 module.exports = {
-    add_alerts,
+    add_alert,
     get_alerts,
     remove_alerts,
 };

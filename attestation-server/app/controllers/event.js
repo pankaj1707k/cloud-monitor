@@ -9,38 +9,32 @@ const {
     response_500,
 } = require("../utils/response_codes");
 
-const add_events = async (req, res) => {
+const add_event = async (req, res) => {
     const data = req.body;
 
     if (data == null || data == "") {
         return response_400(res, "Didn't receive any data.");
     }
 
-    if (!Array.isArray(data)) {
-        return response_400(res, "Expected data to be an 'Array', got something else.");
-    }
-
     try {
-        for (let e of data) {
-            const {
-                machine_id,
-                content,
-                type,
-                timestamp
-            } = e;
+        const {
+            machine_id,
+            content,
+            type,
+            timestamp
+        } = data;
 
-            const event = await Event.create({
-                machine_id,
-                content,
-                type,
-                timestamp
-            });
-        }
+        const event = await Event.create({
+            machine_id,
+            content,
+            type,
+            timestamp
+        });
     } catch (err) {
-        return response_500(res, `Error while saving events. ${err.message}`);
+        return response_500(res, `Error while saving event. ${err.message}`);
     }
 
-    return response_201(res, "Events saved successfully!");
+    return response_201(res, "Event saved successfully!");
 };
 
 const get_events = async (req, res) => {
@@ -162,7 +156,7 @@ const remove_events = async (req, res) => {
 };
 
 module.exports = {
-    add_events,
+    add_event,
     get_events,
     remove_events,
 };

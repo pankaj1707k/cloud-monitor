@@ -4,7 +4,7 @@ const express = require("express"),
 
 module.exports = function (app) {
     log_router.get("/get", log_controller.get_logs);
-    log_router.post("/add", log_controller.add_logs);
+    log_router.post("/add", log_controller.add_log);
     log_router.delete("/remove", log_controller.remove_logs);
 
     app.use("/log", log_router);
