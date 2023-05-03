@@ -9,41 +9,55 @@ const {
     response_500,
 } = require("../utils/response_codes");
 
-const add_logs = async (req, res) => {
+const add_log = async (req, res) => {
     const data = req.body;
 
     if (data == null || data == "") {
         return response_400(res, "Didn't receive any data.");
     }
 
-    if (!Array.isArray(data)) {
-        return response_400(res, "Expected data to be an 'Array', got something else.");
-    }
-
     try {
-        for (let e of data) {
-            const {
-                machine_id,
-                content,
-                type,
-                timestamp
-            } = e;
+        const {
+            machine_id,
+            content,
+            type,
+            timestamp
+        } = data;
 
-            const log = await Log.create({
-                machine_id,
-                content,
-                type,
-                timestamp
-            });
-        }
+        const log = await Log.create({
+            machine_id,
+            content,
+            type,
+            timestamp
+        });
     } catch (err) {
-        return response_500(res, `Error while saving logs. ${err.message}`);
+        return response_500(res, `Error while saving log. ${err.message}`);
     }
 
-    return response_201(res, "Logs saved successfully!");
+    return response_201(res, "Log saved successfully!");
 };
 
 const get_logs = async (req, res) => {
+    // To fetch specific log by ID
+    const { id } = req.query;
+
+    if (id != undefined && id != null && id != "") {
+        try {
+            var log = await Log.findByPk(id);
+
+            if (log == null) {
+                return response_400(res, "No log found!");
+            }
+        } catch (err) {
+            return response_500(
+                res,
+                `Error while fetching log. ${err.message}`
+            );
+        }
+
+        return response_200(res, "Log fetched successfully!", log);
+    }
+
     const {
         // To find logs specific to a device
         machine_id,
@@ -127,7 +141,7 @@ const remove_logs = async (req, res) => {
     }
 
     try {
-        const log = await Log.destroy({
+        await Log.destroy({
             where: {
                 id: {
                     [Op.in]: data,
@@ -142,7 +156,7 @@ const remove_logs = async (req, res) => {
 };
 
 module.exports = {
-    add_logs,
+    add_log,
     get_logs,
     remove_logs,
 };
