@@ -56,8 +56,7 @@ class AuditParser(Parser):
         if self.EVENT_TYPES[event_type] == None:
             return AuditEvent(timestamp=timestamp, type=event_type, raw_content=__event)
         return self.EVENT_TYPES[event_type](
-            __event,
-            AuditEvent(timestamp=timestamp, type=event_type, raw_content=__event),
+            AuditEvent(timestamp=timestamp, type=event_type, raw_content=__event)
         )
 
     def _set_attrs(self, event_obj: AuditEvent, patterns: list[str]) -> AuditEvent:

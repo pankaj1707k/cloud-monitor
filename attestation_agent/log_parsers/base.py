@@ -68,7 +68,11 @@ class Parser:
             sys.exit(1)
 
         _data = list(map(lambda l: l.decode("utf-8").strip(), _data))
-        self.events.extend(list(map(lambda e: self._parse_event(e), _data)))
+        self.events.extend(
+            list(
+                filter(lambda e: e != None, map(lambda e: self._parse_event(e), _data))
+            )
+        )
 
     def run(self) -> None:
         """Run the parser."""
