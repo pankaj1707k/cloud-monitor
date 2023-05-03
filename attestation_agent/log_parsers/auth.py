@@ -31,7 +31,7 @@ class AuthParser(Parser):
             timestamp=self._parse_date_time(f"{_month} {_date}", _time),
             hostname=_event_split[3],
             process=_proc_info[0],
-            pid=int(_proc_info[1][:-2]),
+            pid=int(_proc_info[1][:-2]) if len(_proc_info) > 1 else None,
             action=" ".join(_event_split[5:]),
             raw_content=__event,
         )
