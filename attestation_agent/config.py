@@ -1,0 +1,6 @@
+AUTH_LOG = "/var/log/auth.log"
+AUDIT_LOG = "/var/log/audit/audit.log"
+MACHINE_ID_PATH = "/etc/machine-id"
+ATTESTATION_HOST = ""
+ATTESTATION_PORT = "8080"
+BASE_URL = f"http://{ATTESTATION_HOST}:{ATTESTATION_PORT}"

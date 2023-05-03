@@ -1,9 +1,9 @@
 import datetime
 
-from log_parsers.base import Event, Parser
-from log_parsers.utils import MONTHS
+from attestation_agent.config import AUTH_LOG
 
-from .. import AUTH_LOG
+from .base import Event, Parser
+from .utils import MONTHS
 
 
 class AuthEvent(Event):

@@ -1,6 +1,6 @@
 """
 Main driver code that runs the agent.
-This file is autorun on `python attestation-agent` command.
+This file is autorun on `python attestation_agent` command.
 """
 
 import json
@@ -8,14 +8,9 @@ import time
 from collections import deque
 
 import requests
-from log_parsers import *
 
-AUTH_LOG = "/var/log/auth.log"
-AUDIT_LOG = "/var/log/audit/audit.log"
-MACHINE_ID_PATH = "/etc/machine-id"
-ATTESTATION_HOST = ""
-ATTESTATION_PORT = "8080"
-BASE_URL = f"http://{ATTESTATION_HOST}:{ATTESTATION_PORT}"
+from .config import *
+from .log_parsers import *
 
 with open(MACHINE_ID_PATH) as fd:
     MACHINE_ID = fd.read().strip()
