@@ -18,7 +18,6 @@ module.exports = {
     Sequelize,
 
     // Models
-    Alert: require("./alert")(sequelize, Sequelize),
     Event: require("./event")(sequelize, Sequelize),
     Log: require("./log")(sequelize, Sequelize),
 };
