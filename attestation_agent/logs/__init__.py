@@ -1,8 +1,13 @@
 import os
+import sys
 import time
 from abc import ABC, abstractmethod
 from collections import deque
 from threading import Lock
+
+from rich.table import Table
+
+from attestation_agent.utils import console
 
 
 class Event(ABC):
@@ -57,6 +62,7 @@ class Parser(ABC):
         # Starting byte index of the log file.
         # Keeps track of how much of the file has been read.
         self._pos: int = 0
+        self._line: int = 0
 
         # Parser state while parsing, for error handling
         self._data: str = None
@@ -77,9 +83,9 @@ class Parser(ABC):
         self.events.clear()
         return events
 
-    def parse_file(self) -> bool:
+    def parse_line(self) -> bool:
         """
-        Read the log file, parse events and add them to the event queue.
+        Read a line from the log file, parse it and add it to the event queue.
         """
         # Skip the parsed bytes, read a line and store
         # the current cursor position in the file
@@ -102,31 +108,54 @@ class Parser(ABC):
 
     def run(self) -> None:
         """Run the parser."""
-
         # While the parser can run, it will read
         # and parse the log files to generate events
         while self._running:
-            # Store return code to check if we have reached the EOF
-            retcode = None
+            # Whether to wait for next line or not (when EOF is reached)
+            wait_for_nextline = False
 
             with self.lock:
-                # Try to parse the file and catch any errors
+                # Try to parse a line and catch any error
                 # and re-raise it as a `ParseError`
                 try:
-                    retcode = self.parse_file()
+                    wait_for_nextline = not self.parse_line()
                 except Exception as exc:
-                    print(ParseError(msg=(
-                        "ParseError:\n"
-                        f"\tposition: {self._pos} bytes\n"
-                        f"\tdata    : {self._data!r}\n"
-                        f"\texc     : {exc!r}"
-                    )))
+                    print(
+                        ParseError(
+                            msg="error while parsing line",
+                            line=self._line,
+                            position=self._pos,
+                            data=self._data,
+                            exc=exc
+                        ),
+                        file=sys.stderr
+                    )
+                finally:
+                    # Keep track of the number of lines parsed so far
+                    self._line += 1
 
             # Check if we have reached the EOF of the log file
-            if not retcode:
+            if wait_for_nextline:
                 # The below sleep should allow any new content to appear
                 # and the main program to acquire `self.lock` to read `self.events`
                 time.sleep(1)
+
+    def get_state(self):
+        """
+        Return a `dict` of the state variables
+        """
+        return {
+            "line": self._line,
+            "position": self._pos,
+        }
+
+    def set_state(self, state={}):
+        """
+        Set the state variables of the parser: _line, _pos
+        """
+        with self.lock:
+            self._line = state.get("line", self._line)
+            self._pos = state.get("position", self._pos)
 
     def stop(self):
         """
@@ -139,16 +168,26 @@ class Parser(ABC):
         """
         Parse the event string and return an instance of `Event`.
         """
-
         raise NotImplementedError("Must implement event parsing function")
 
 
 class ParseError(Exception):
-    """Generic failure of a channel operation.
-
-    :param msg: a message describing the failure
-    :type msg: str
+    """
+    Generic failure of a parser.
     """
 
-    def __init__(self, msg="generic parse error"):
+    def __init__(self, msg="generic parse error", **kwargs):
         super().__init__(msg)
+        self.kwargs = kwargs
+
+    def __str__(self) -> str:
+        with console.capture() as capture:
+            table = Table(
+                *self.kwargs.keys(),
+                title="ParseError"
+            )
+
+            table.add_row(*map(lambda attr: str(attr), self.kwargs.values()))
+            console.print(table)
+
+        return capture.get()

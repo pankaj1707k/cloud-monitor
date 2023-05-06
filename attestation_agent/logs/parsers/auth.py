@@ -1,9 +1,7 @@
-import datetime
+from datetime import datetime
 
 from attestation_agent.config import AUTH_LOG
-
-from .base import Event, Parser
-from .utils import MONTHS
+from attestation_agent.logs import Event, Parser
 
 
 class AuthEvent(Event):
@@ -38,10 +36,11 @@ class AuthParser(Parser):
 
     def _parse_date_time(self, __date: str, __time: str) -> int:
         _month, _date = __date.split()
-        _year = datetime.datetime.now().year
+        _month = datetime.strptime(_month, "%b").month
+        _year = datetime.now().year
         _hour, _minute, _second = map(int, __time.split(":"))
         return int(
-            datetime.datetime(
-                _year, MONTHS[_month.lower()], int(_date), _hour, _minute, _second
+            datetime(
+                _year, _month, int(_date), _hour, _minute, _second
             ).timestamp()
         )

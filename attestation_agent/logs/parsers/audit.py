@@ -1,8 +1,7 @@
 import re
 
 from attestation_agent.config import AUDIT_LOG
-
-from .base import Event, Parser
+from attestation_agent.logs import Event, Parser
 
 
 class AuditEvent(Event):
