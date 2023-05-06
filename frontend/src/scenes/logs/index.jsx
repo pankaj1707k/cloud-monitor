@@ -1,43 +1,50 @@
-import { Box, Typography, useTheme } from "@mui/material";
+import { Box, useTheme } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { tokens } from "../../theme";
-import { mockDataInvoices } from "../../data/mockData";
+import { useEffect, useState } from "react";
 import Header from "../../components/Header";
+import { tokens } from "../../theme";
 
-const Invoices = () => {
+const Logs = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+
+  var [logs, setLogs] = useState([]);
+
+  const API_URL = "http://localhost:8000/api/log/get";
+
+  useEffect(() => {
+    async function getLogs() {
+      const result = await fetch(API_URL);
+      if (!ignore) {
+        setLogs(result);
+      }
+    }
+
+    let ignore = false;
+    getLogs();
+    return () => {
+      ignore = true;
+    };
+  }, [logs]);
+
   const columns = [
-    { field: "id", headerName: "ID" },
+    { field: "machine_id", headerName: "Machine ID", flex: 0.5 },
+    { field: "log_filepath", headerName: "Log file" },
     {
-      field: "name",
-      headerName: "Name",
-      flex: 1,
-      cellClassName: "name-column--cell",
+      field: "timestamp",
+      headerName: "Timestamp",
+      type: "number",
+      headerAlign: "left",
     },
     {
-      field: "phone",
-      headerName: "Phone Number",
+      field: "type",
+      headerName: "Type",
       flex: 1,
+      align: "left",
     },
     {
-      field: "email",
-      headerName: "Email",
-      flex: 1,
-    },
-    {
-      field: "cost",
-      headerName: "Cost",
-      flex: 1,
-      renderCell: (params) => (
-        <Typography color={colors.greenAccent[500]}>
-          ${params.row.cost}
-        </Typography>
-      ),
-    },
-    {
-      field: "date",
-      headerName: "Date",
+      field: "content",
+      headerName: "Content",
       flex: 1,
     },
   ];
@@ -74,10 +81,10 @@ const Invoices = () => {
           },
         }}
       >
-        <DataGrid checkboxSelection rows={mockDataInvoices} columns={columns} />
+        <DataGrid rows={logs} columns={columns} />
       </Box>
     </Box>
   );
 };
 
-export default Invoices;
+export default Logs;

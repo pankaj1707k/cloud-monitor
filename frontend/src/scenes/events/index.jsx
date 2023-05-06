@@ -1,61 +1,57 @@
-import { Box } from "@mui/material";
+import { Box, useTheme } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
-import { tokens } from "../../theme";
-import { mockDataContacts } from "../../data/mockData";
+import { useEffect, useState } from "react";
 import Header from "../../components/Header";
-import { useTheme } from "@mui/material";
+import { tokens } from "../../theme";
 
-const Contacts = () => {
+const Events = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
+  var [events, setEvents] = useState([]);
+
+  const API_URL = "http://localhost:8000/api/event/get";
+
+  useEffect(() => {
+    async function getEvents() {
+      const result = await fetch(API_URL);
+      if (!ignore) {
+        setEvents(result);
+      }
+    }
+
+    let ignore = false;
+    getEvents();
+    return () => {
+      ignore = true;
+    };
+  }, [events]);
+
   const columns = [
-    { field: "id", headerName: "ID", flex: 0.5 },
-    { field: "registrarId", headerName: "Registrar ID" },
+    { field: "machine_id", headerName: "Machine ID", flex: 0.5 },
+    { field: "log_filepath", headerName: "Log file" },
     {
-      field: "name",
-      headerName: "Name",
-      flex: 1,
-      cellClassName: "name-column--cell",
-    },
-    {
-      field: "age",
-      headerName: "Age",
+      field: "timestamp",
+      headerName: "Timestamp",
       type: "number",
       headerAlign: "left",
+    },
+    {
+      field: "type",
+      headerName: "Type",
+      flex: 1,
       align: "left",
     },
     {
-      field: "phone",
-      headerName: "Phone Number",
-      flex: 1,
-    },
-    {
-      field: "email",
-      headerName: "Email",
-      flex: 1,
-    },
-    {
-      field: "address",
-      headerName: "Address",
-      flex: 1,
-    },
-    {
-      field: "city",
-      headerName: "City",
-      flex: 1,
-    },
-    {
-      field: "zipCode",
-      headerName: "Zip Code",
+      field: "props",
+      headerName: "Properties",
       flex: 1,
     },
   ];
 
   return (
     <Box m="20px">
-      <Header
-        title="EVENTS"/>
+      <Header title="EVENTS" />
       <Box
         m="40px 0 0 0"
         height="75vh"
@@ -89,7 +85,7 @@ const Contacts = () => {
         }}
       >
         <DataGrid
-          rows={mockDataContacts}
+          rows={events}
           columns={columns}
           components={{ Toolbar: GridToolbar }}
         />
@@ -98,4 +94,4 @@ const Contacts = () => {
   );
 };
 
-export default Contacts;
+export default Events;
