@@ -5,9 +5,6 @@ module.exports = (sequelize, Sequelize) => {
             machine_id: {
                 type: Sequelize.STRING,
             },
-            content: {
-                type: Sequelize.STRING,
-            },
             type: {
                 type: Sequelize.STRING,
             },
@@ -15,6 +12,9 @@ module.exports = (sequelize, Sequelize) => {
                 type: Sequelize.INTEGER,
             },
             log_filepath: {
+                type: Sequelize.STRING,
+            },
+            uploaded_filepath: {
                 type: Sequelize.STRING,
             },
         },

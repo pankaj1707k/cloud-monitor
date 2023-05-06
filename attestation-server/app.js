@@ -31,6 +31,9 @@ db.sequelize.sync({ alter: true }).then(() => {
     console.log("Re-synchronizing with the database ...");
 });
 
+// Serve the uploaded files at `/uploads`
+app.use("/uploads", express.static(__dirname + "/uploads"));
+
 // Set the basic middleware(s)
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

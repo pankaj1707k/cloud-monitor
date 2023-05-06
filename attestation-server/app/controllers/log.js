@@ -9,17 +9,22 @@ const {
     response_500,
 } = require("../utils/response_codes");
 
-const add_log = async (req, res) => {
+const upload_log = async (req, res) => {
+    const logfile = req.file;
     const data = req.body;
+
+    if (logfile == null) {
+        return response_400(res, "Didn't receive any file.");
+    }
 
     if (data == null || data == "") {
         return response_400(res, "Didn't receive any data.");
     }
 
     try {
+        const uploaded_filepath = req.file.path;
         const {
             machine_id,
-            content,
             type,
             timestamp,
             log_filepath
@@ -30,7 +35,8 @@ const add_log = async (req, res) => {
             content,
             type,
             timestamp,
-            log_filepath
+            log_filepath,
+            uploaded_filepath
         });
     } catch (err) {
         return response_500(res, `Error while saving log. ${err.message}`);
@@ -158,7 +164,7 @@ const remove_logs = async (req, res) => {
 };
 
 module.exports = {
-    add_log,
+    upload_log,
     get_logs,
     remove_logs,
 };
