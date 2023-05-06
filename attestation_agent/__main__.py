@@ -73,24 +73,11 @@ def handle_events(events: deque[Event]) -> None:
             "props": "",
         }
 
-        # Extract attributes of event
-        event_props = {
+        # Extract and marshal the attributes for sending to the attestation server
+        event_dict["props"] = json.dumps({
             key: value for key, value in event.__dict__.items() if key not in event_dict
-        }
-
-        # Marshal the attributes and send to the attestation server
-        event_dict["props"] = json.dumps(event_props)
+        })
         _ = requests.post(url=f"{BASE_URL}/api/event/add", json=event_dict)
-
-        # TODO: Send logs separately via a logger
-        # If we get a ParseError, we don't get an Event object
-        # and nothing is sent to the server
-
-        # Send raw event log (line in log file) to the attestation server
-        event_log = event_dict.copy()
-        _ = event_log.pop("props")
-        event_log["content"] = event.raw_content
-        _ = requests.post(url=f"{BASE_URL}/api/log/add", json=event_log)
 
 
 def main():
