@@ -95,6 +95,8 @@ def main():
 
     # Try to connect to the socket.io server
     try:
+        # NOTE: If the server restarts or the connection breaks
+        # A new Socket ID may be assigned, update variables accordinly
         sio.connect(BASE_URL, headers={ "MACHINE-ID": MACHINE_ID })
         print(f"connected!")
         print(f"Got socketID: {sio.sid}")
@@ -121,7 +123,7 @@ def main():
     tpe = ThreadPoolExecutor(max_workers=8)
 
     # Functions to run the logger and parser
-    logger_runner = lambda logger: logger.run(sio)
+    logger_runner = lambda logger: logger.run(MACHINE_ID, sio)
     parser_runner = lambda parser: parser.run()
 
     # Run loggers and parsers in a separate thread each

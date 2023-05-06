@@ -8,9 +8,6 @@ class Event(ABC):
 
     Attributes:
     - `timestamp`: `int`
-    - `hostname`: `str`
-    - `process`: `str`
-    - `pid`: `int`
     - `action`: `str`
     - `raw_content`: `str`
     """

@@ -16,6 +16,9 @@ class Logger(ABC):
         # Store the state of logger
         self._running: bool = True
 
+        # Save the machine ID for socket communication to identify the device
+        self.machine_id: str = None
+
         # Create a mutex lock used to pause the parser to flush generated events
         self.lock: Lock = Lock()
 
@@ -24,10 +27,13 @@ class Logger(ABC):
         # high memory consumption when machine runs for longer durations.
         self.logs: deque[str] = deque()
 
-    def run(self, sio: "socketio.Client") -> None:
+    def run(self, machine_id: str, sio: "socketio.Client") -> None:
         """
         Run the logger.
         """
+        # Save the machine ID
+        self.machine_id = machine_id
+
         # While the logger can run, it will collect
         # usage metrics and send them to the attestation server
         while self._running:
@@ -65,8 +71,11 @@ class Logger(ABC):
         """
         Sends data to the attestation server
         """
+        # Create a timestamp at which the log was recorded
+        timestamp = int(time.time())
+
         try:
-            sio.emit("collect_log", (self.type, data))
+            sio.emit("collect_log", (self.machine_id, timestamp, self.type, data))
         except Exception as exc:
             print(
                 LogError(

@@ -3,7 +3,7 @@ const app = express(),
     api_router = express.Router();
 
 const server = require("http").createServer(app);
-const io = require("socket.io")(server);
+const sio = require("socket.io")(server);
 
 const cors = require("cors");
 const body_parser = require("body-parser");
@@ -22,9 +22,6 @@ var corsOptions = {
 
 // Connect to the database
 const db = require("./app/models");
-
-// Socket.io sessions, machine-id -> socket
-const sessions = {};
 
 // Re-synchronize with the database to detect and make modifications
 db.sequelize.sync({ alter: true }).then(() => {
@@ -63,16 +60,9 @@ app.use((err, req, res, next) => {
     console.log(err);
 });
 
-io.on("connection", (socket) => {
+sio.on("connection", (socket) => {
     // Log the received connection
     console.log(`Connected, socketID: ${socket.id}`);
-
-    // Save the socket
-    const machine_id = socket.handshake.headers["machine-id"];
-
-    if (machine_id != null || machine_id != "") {
-        sessions[machine_id] = socket;
-    }
 
     // Attach a disconnect listener when the agent disconnects
     socket.on("disconnect", () => {
