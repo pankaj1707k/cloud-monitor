@@ -58,5 +58,14 @@ app.use((err, req, res, next) => {
 });
 
 io.on("connection", (socket) => {
-    console.log("Received socketIO connection!");
+    console.log(`Connected, socketID: ${socket.id}`);
+
+    socket.on("disconnect", () => {
+        console.log(`Disconnected, socketID: ${socket.id}`);
+    });
+
+    socket.on("collectLogs", (type, data) => {
+        console.log(type);
+        console.log(data);
+    });
 })
