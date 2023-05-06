@@ -1,11 +1,25 @@
-import { ResponsiveLine } from "@nivo/line";
 import { useTheme } from "@mui/material";
+import { ResponsiveLine } from "@nivo/line";
+import { useEffect, useState } from "react";
+import { io } from "socket.io-client";
 import { tokens } from "../theme";
-import { mockLineData as data } from "../data/mockData";
 
 const LineChart = ({ isCustomLineColors = false, isDashboard = false }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+
+  const URL = "http://localhost:8080";
+  var [data, setData] = useState([]);
+
+  useEffect(() => {
+    const socket = io(URL);
+    // change first parameter ('data') based on the event emitted by the server
+    socket.on("data", (newData) => {
+      setData(newData);
+    });
+
+    return () => socket.disconnect();
+  }, []);
 
   return (
     <ResponsiveLine

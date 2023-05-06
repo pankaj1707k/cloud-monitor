@@ -1,9 +1,8 @@
-import { Box, IconButton, Typography, useTheme } from "@mui/material";
-import { tokens } from "../../theme";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
+import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import Header from "../../components/Header";
 import LineChart from "../../components/LineChart";
-
+import { tokens } from "../../theme";
 
 const Dashboard = () => {
   const theme = useTheme();
@@ -39,19 +38,19 @@ const Dashboard = () => {
           >
             <Box>
               <Typography
-                variant="h5"
-                fontWeight="600"
+                variant="h3"
+                fontWeight="800"
                 color={colors.grey[100]}
               >
-                Revenue Generated
+                Virtual Machine 0
               </Typography>
-              <Typography
+              {/* <Typography
                 variant="h3"
                 fontWeight="bold"
                 color={colors.greenAccent[500]}
               >
                 $59,342.32
-              </Typography>
+              </Typography> */}
             </Box>
             <Box>
               <IconButton>
@@ -65,7 +64,7 @@ const Dashboard = () => {
             <LineChart isDashboard={true} />
           </Box>
         </Box>
-        
+
         {/*Row 2*/}
 
         <Box
@@ -82,19 +81,19 @@ const Dashboard = () => {
           >
             <Box>
               <Typography
-                variant="h5"
-                fontWeight="600"
+                variant="h3"
+                fontWeight="800"
                 color={colors.grey[100]}
               >
-                Revenue Generated
+                Virtual Machine 1
               </Typography>
-              <Typography
+              {/* <Typography
                 variant="h3"
                 fontWeight="bold"
                 color={colors.greenAccent[500]}
               >
                 $59,342.32
-              </Typography>
+              </Typography> */}
             </Box>
             <Box>
               <IconButton>
@@ -108,7 +107,6 @@ const Dashboard = () => {
             <LineChart isDashboard={true} />
           </Box>
         </Box>
-
       </Box>
     </Box>
   );
