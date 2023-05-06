@@ -13,9 +13,9 @@ import socketio
 
 from attestation_agent.config import AUDIT_LOG, AUTH_LOG, BASE_URL, MACHINE_ID_PATH
 from attestation_agent.logs import Event
+from attestation_agent.logs.loggers import UsageLogger
 from attestation_agent.logs.parsers import AuditParser, AuthParser
 from attestation_agent.utils import load_session, save_session
-
 
 # Machine ID stored in `/etc/machine-id` or in a custom location
 MACHINE_ID: str = None
@@ -23,11 +23,16 @@ MACHINE_ID: str = None
 # Global objects below
 # SocketIO object for real-time communication with the attestation server
 # For instance, to receive updates from the server
-io = socketio.Client()
+sio = socketio.Client()
 
 # ThreadPoolExecutor instance to execute loggers and parsers
 # in separate threads for concurrency via multi-threading
 tpe: ThreadPoolExecutor = None
+
+# Loggers to continuously send logs to the attestation server
+LOGGERS = (
+    UsageLogger(),
+)
 
 # Log parsers to parse logs and send events to the attestation server
 PARSERS = (
@@ -91,7 +96,7 @@ def main():
     """
     Initialize the agent to run loggers and parsers in their separate threads
     """
-    global io, tpe
+    global sio, tpe
 
     # Read the machine ID from given path
     read_machine_id(MACHINE_ID_PATH)
@@ -102,11 +107,11 @@ def main():
 
     # Try to connect to the socket.io server
     try:
-        io.connect(BASE_URL)
+        sio.connect(BASE_URL)
         print(f"connected!")
-        print(f"Got socketID: {io.sid}")
+        print(f"Got socketID: {sio.sid}")
     except:
-        io = None
+        sio = None
         print(
             "Failed to connect to the attestation server."
             "Make sure the server is running and accessible."
@@ -127,11 +132,13 @@ def main():
     # Initialize a thread pool of 8 threads
     tpe = ThreadPoolExecutor(max_workers=8)
 
-    # Function to run the parser
-    runner_func = lambda obj: obj.run()
+    # Functions to run the logger and parser
+    logger_runner = lambda logger: logger.run(sio)
+    parser_runner = lambda parser: parser.run()
 
-    # Run the parsers in a separate thread each
-    _ = tpe.map(runner_func, PARSERS)
+    # Run loggers and parsers in a separate thread each
+    _ = tpe.map(logger_runner, LOGGERS)
+    _ = tpe.map(parser_runner, PARSERS)
 
     # Infinite loop:
     # - pick a parser
@@ -161,8 +168,11 @@ if __name__ == "__main__":
     try:
         main()
     except (KeyboardInterrupt, SystemExit):
-        # Stop and wait for the parsers to exit and release the thread pool
-        print("Waiting for running parsers to finish ... ", end="", flush=True)
+        # Stop and wait for the loggers and parsers to exit and release the thread pool
+        print("Waiting for running threads to finish ... ", end="", flush=True)
+
+        for logger in LOGGERS:
+            logger.stop()
 
         for parser in PARSERS:
             parser.stop()
