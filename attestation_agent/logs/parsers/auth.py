@@ -22,8 +22,8 @@ class AuthParser(Parser):
     def __init__(self, filepath: str) -> None:
         super().__init__(filepath)
 
-    def _parse_event(self, __event: str) -> Event:
-        _event_split = __event.split()
+    def _parse_event(self) -> Event:
+        _event_split = self._data.split()
         _month, _date, _time = _event_split[:3]
         _proc_info = _event_split[4].split("[")
 
@@ -33,7 +33,7 @@ class AuthParser(Parser):
             process=_proc_info[0],
             pid=int(_proc_info[1][:-2]) if len(_proc_info) > 1 else None,
             action=" ".join(_event_split[5:]),
-            raw_content=__event,
+            raw_content=self._data,
         )
 
     def _parse_date_time(self, __date: str, __time: str) -> int:

@@ -48,15 +48,18 @@ class AuditParser(Parser):
             "USER_AUTH": self._parse_user_auth,
         }
 
-    def _parse_event(self, __event: str) -> Event | None:
-        timestamp = int(float(self.timestamp_re.search(__event).group(0)))
-        event_type = self.event_type_re.search(__event).group("type")
+    def _parse_event(self) -> Event | None:
+        timestamp = int(float(self.timestamp_re.search(self._data).group(0)))
+        event_type = self.event_type_re.search(self._data).group("type")
+
         if event_type not in self.EVENT_TYPES:
             return None
+
         if self.EVENT_TYPES[event_type] == None:
-            return AuditEvent(timestamp=timestamp, type=event_type, raw_content=__event)
+            return AuditEvent(timestamp=timestamp, type=event_type, raw_content=self._data)
+
         return self.EVENT_TYPES[event_type](
-            AuditEvent(timestamp=timestamp, type=event_type, raw_content=__event)
+            AuditEvent(timestamp=timestamp, type=event_type, raw_content=self._data)
         )
 
     def _set_attrs(self, event_obj: AuditEvent, patterns: list[str]) -> AuditEvent:
