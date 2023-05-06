@@ -37,23 +37,23 @@ def handle_events(events: deque[Event]) -> None:
             "timestamp": event.timestamp,
             "type": event.type,
             "log_filepath": event.log_file,
-            "data": "",
+            "props": "",
         }
+
         event_props = {
             key: value for key, value in event.__dict__.items() if key not in event_dict
         }
-        event_dict["data"] = json.dumps(event_props)
+        event_dict["props"] = json.dumps(event_props)
         _ = requests.post(
-            url=f"{BASE_URL}/api/event/add", data=event_dict, headers=headers
+            url=f"{BASE_URL}/api/event/add", json=event_dict, headers=headers
         )
 
         # send raw event log
         event_log = event_dict.copy()
-        _ = event_log.pop("log_filepath")
-        _ = event_log.pop("data")
+        _ = event_log.pop("props")
         event_log["content"] = event.raw_content
         _ = requests.post(
-            url=f"{BASE_URL}/api/log/add", data=event_log, headers=headers
+            url=f"{BASE_URL}/api/log/add", json=event_log, headers=headers
         )
 
 
