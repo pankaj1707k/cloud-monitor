@@ -5,10 +5,7 @@ from abc import ABC, abstractmethod
 from collections import deque
 from threading import Lock
 
-from rich.table import Table
-
-from attestation_agent.utils import console
-
+from attestation_agent.errors import LogError, ParseError
 
 class Event(ABC):
     """
@@ -198,7 +195,7 @@ class Parser(ABC):
 
             with self.lock:
                 # Try to parse a line and catch any error
-                # and re-raise it as a `ParseError`
+                # and print it as ParseError
                 try:
                     wait_for_nextline = not self.parse_line()
                 except Exception as exc:
@@ -250,26 +247,4 @@ class Parser(ABC):
         """
         Parse the event string and return an instance of `Event`.
         """
-        raise NotImplementedError("Must implement event parsing function")
-
-
-class ParseError(Exception):
-    """
-    Generic failure of a parser.
-    """
-
-    def __init__(self, msg="generic parse error", **kwargs):
-        super().__init__(msg)
-        self.kwargs = kwargs
-
-    def __str__(self) -> str:
-        with console.capture() as capture:
-            table = Table(
-                *self.kwargs.keys(),
-                title="ParseError"
-            )
-
-            table.add_row(*map(lambda attr: str(attr), self.kwargs.values()))
-            console.print(table)
-
-        return capture.get()
+        raise NotImplementedError("Implementation required for: _parse_event")
