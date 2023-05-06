@@ -2,6 +2,7 @@ from rich.table import Table
 
 from attestation_agent.utils import console
 
+
 class AttestationError(Exception):
     def __init__(self, title="AttestationError", msg="generic logging error", **kwargs):
         super().__init__(msg)

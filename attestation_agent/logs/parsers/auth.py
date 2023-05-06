@@ -1,7 +1,8 @@
 from datetime import datetime
 
 from attestation_agent.config import AUTH_LOG
-from attestation_agent.logs import Event, Parser
+
+from .base import Event, Parser
 
 
 class AuthEvent(Event):

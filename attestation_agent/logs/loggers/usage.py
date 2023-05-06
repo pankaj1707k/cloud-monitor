@@ -20,7 +20,7 @@ from psutil import (
     sensors_temperatures
 )
 
-from attestation_agent.logs import Logger
+from .base import Logger
 
 
 class UsageLogger(Logger):

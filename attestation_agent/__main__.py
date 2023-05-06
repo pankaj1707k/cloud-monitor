@@ -11,7 +11,8 @@ from concurrent.futures import ThreadPoolExecutor
 import requests
 import socketio
 
-from attestation_agent.config import AUDIT_LOG, AUTH_LOG, BASE_URL, MACHINE_ID_PATH
+from attestation_agent.config import (AUDIT_LOG, AUTH_LOG, BASE_URL,
+                                      MACHINE_ID_PATH)
 from attestation_agent.logs import Event
 from attestation_agent.logs.loggers import UsageLogger
 from attestation_agent.logs.parsers import AuditParser, AuthParser

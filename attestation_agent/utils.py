@@ -2,9 +2,9 @@ import json
 import os
 import sys
 
-from attestation_agent.config import SESSION_FILEPATH
-
 from rich.console import Console
+
+from attestation_agent.config import SESSION_FILEPATH
 
 # Rich console for prettier output
 console = Console()
