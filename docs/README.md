@@ -55,6 +55,9 @@ Setup process:
   the attestation server.
 - Install required dependencies:
   `$ npm install`
+- Set the following environment variables:
+  - `DATABASE_URL`
+  - `PORT`
 - Start server: `$ node app.js`
 
 ### Attestation agent
