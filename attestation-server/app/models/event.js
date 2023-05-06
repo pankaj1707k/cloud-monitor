@@ -6,7 +6,7 @@ module.exports = (sequelize, Sequelize) => {
                 type: Sequelize.STRING,
                 required: true,
             },
-            data: {
+            props: {
                 type: Sequelize.JSON,
             },
             type: {

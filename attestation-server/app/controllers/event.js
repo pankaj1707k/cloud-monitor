@@ -19,16 +19,19 @@ const add_event = async (req, res) => {
     try {
         const {
             machine_id,
-            content,
             type,
-            timestamp
+            timestamp,
+            props,
+            log_filepath
         } = data;
+
 
         const event = await Event.create({
             machine_id,
-            content,
             type,
-            timestamp
+            timestamp,
+            props,
+            log_filepath
         });
     } catch (err) {
         return response_500(res, `Error while saving event. ${err.message}`);

@@ -14,6 +14,9 @@ module.exports = (sequelize, Sequelize) => {
             timestamp: {
                 type: Sequelize.INTEGER,
             },
+            log_filepath: {
+                type: Sequelize.STRING,
+            },
         },
         {
             timestamps: false,

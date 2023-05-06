@@ -21,14 +21,16 @@ const add_log = async (req, res) => {
             machine_id,
             content,
             type,
-            timestamp
+            timestamp,
+            log_filepath
         } = data;
 
         const log = await Log.create({
             machine_id,
             content,
             type,
-            timestamp
+            timestamp,
+            log_filepath
         });
     } catch (err) {
         return response_500(res, `Error while saving log. ${err.message}`);
