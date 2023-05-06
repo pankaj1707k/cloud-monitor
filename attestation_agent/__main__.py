@@ -3,10 +3,10 @@ Main driver code that runs the agent.
 This file is autorun on `python attestation_agent` command.
 """
 
-from concurrent.futures import ThreadPoolExecutor
 import json
 import time
 from collections import deque
+from concurrent.futures import ThreadPoolExecutor
 
 import requests
 import socketio

@@ -1,8 +1,9 @@
 import os
 import time
-from collections import deque
 from abc import ABC, abstractmethod
+from collections import deque
 from threading import Lock
+
 
 class Event(ABC):
     """

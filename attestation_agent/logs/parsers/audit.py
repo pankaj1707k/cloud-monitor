@@ -27,11 +27,12 @@ class AuditParser(Parser):
     def __init__(self, filepath: str) -> None:
         super().__init__(filepath)
 
-        # record types which do not correspond to any property
+        # Record types which do not correspond to any property
         # parsing method only provide the record type and timestamp
-        # as useful properties. For instance, `ANOM_LOGIN_FAILURES`
-        # suggests that the number of login failures were exceeded
-        # and thus do not require any more details to be parsed.
+        # as useful properties.
+        # For instance, `ANOM_LOGIN_FAILURES` suggests that
+        # the number of login failures were exceeded
+        # and thus does not require any more details to be parsed.
         self.EVENT_TYPES = {
             "CONFIG_CHANGE": None,
             "KERNEL": None,
@@ -77,7 +78,7 @@ class AuditParser(Parser):
                     value = int(value) if value.isdigit() else value
                     setattr(event_obj, key, value)
             except AttributeError:
-                # raised if `p_obj.search()` returns None
+                # Raised if `p_obj.search()` returns None
                 pass
         return event_obj
 
