@@ -2,6 +2,9 @@ const express = require("express");
 const app = express(),
     api_router = express.Router();
 
+const server = require("http").createServer(app);
+const io = require("socket.io")(server);
+
 const cors = require("cors");
 const body_parser = require("body-parser");
 
@@ -45,7 +48,7 @@ app.use("/api", api_router);
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
 
@@ -53,3 +56,7 @@ app.listen(PORT, () => {
 app.use((err, req, res, next) => {
     console.log(err);
 });
+
+io.on("connection", (socket) => {
+    console.log("Received socketIO connection!");
+})

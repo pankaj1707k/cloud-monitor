@@ -25,7 +25,6 @@ const add_event = async (req, res) => {
             log_filepath
         } = data;
 
-
         const event = await Event.create({
             machine_id,
             type,
