@@ -23,6 +23,9 @@ var corsOptions = {
 // Connect to the database
 const db = require("./app/models");
 
+// Socket.io sessions, machine-id -> socket
+const sessions = {};
+
 // Re-synchronize with the database to detect and make modifications
 db.sequelize.sync({ alter: true }).then(() => {
     console.log("Re-synchronizing with the database ...");
@@ -58,14 +61,22 @@ app.use((err, req, res, next) => {
 });
 
 io.on("connection", (socket) => {
+    // Log the received connection
     console.log(`Connected, socketID: ${socket.id}`);
 
+    // Save the socket
+    const machine_id = socket.handshake.headers["machine-id"];
+
+    if (machine_id != null || machine_id != "") {
+        sessions[machine_id] = socket;
+    }
+
+    // Attach a disconnect listener when the agent disconnects
     socket.on("disconnect", () => {
+        // Log the lost connection
         console.log(`Disconnected, socketID: ${socket.id}`);
     });
 
-    socket.on("collectLogs", (type, data) => {
-        console.log(type);
-        console.log(data);
-    });
+    // Attach socket.io event handlers
+    require("./app/routes/socketio")(socket);
 })

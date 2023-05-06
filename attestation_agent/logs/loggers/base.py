@@ -66,7 +66,7 @@ class Logger(ABC):
         Sends data to the attestation server
         """
         try:
-            sio.emit("collectLogs", (self.type, data))
+            sio.emit("collect_log", (self.type, data))
         except Exception as exc:
             print(
                 LogError(

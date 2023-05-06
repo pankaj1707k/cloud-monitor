@@ -24,7 +24,7 @@ MACHINE_ID: str = None
 # Global objects below
 # SocketIO object for real-time communication with the attestation server
 # For instance, to receive updates from the server
-sio = socketio.Client()
+sio: socketio.Client = socketio.Client()
 
 # ThreadPoolExecutor instance to execute loggers and parsers
 # in separate threads for concurrency via multi-threading
@@ -95,7 +95,7 @@ def main():
 
     # Try to connect to the socket.io server
     try:
-        sio.connect(BASE_URL)
+        sio.connect(BASE_URL, headers={ "MACHINE-ID": MACHINE_ID })
         print(f"connected!")
         print(f"Got socketID: {sio.sid}")
     except:
@@ -156,6 +156,10 @@ if __name__ == "__main__":
     try:
         main()
     except (KeyboardInterrupt, SystemExit):
+        # Disconnect from the server
+        if sio.connected:
+            sio.disconnect()
+
         # Stop and wait for the loggers and parsers to exit and release the thread pool
         print("Waiting for running threads to finish ... ", end="", flush=True)
 
