@@ -27,7 +27,7 @@ const LineChart = ({ machine_id, title, unit = "", path = "", isDashboard = fals
             x: timestamp - prev,
             y: logs[timestamp].data
           };
-    
+
           if (path === null || path === "") return d;
     
           let sub = path.split(".");
@@ -35,7 +35,7 @@ const LineChart = ({ machine_id, title, unit = "", path = "", isDashboard = fals
           for (let s of sub) {
             d.y = d.y[s];
           }
-    
+
           d.y = `${d.y} ${unit}`;
           return d;
         }),
@@ -44,11 +44,11 @@ const LineChart = ({ machine_id, title, unit = "", path = "", isDashboard = fals
     });
 
     return () => socket.disconnect();
-  }, [path, unit]);
+  }, []);
 
   return (<>
   <Box
-      gridColumn="span 6"
+      gridColumn="span 4"
       gridRow="span 2"
       backgroundColor={colors.primary[400]}
     >
