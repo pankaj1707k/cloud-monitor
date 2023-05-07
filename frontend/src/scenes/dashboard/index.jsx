@@ -1,113 +1,16 @@
-import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
-import { Box, IconButton, Typography, useTheme } from "@mui/material";
+import { Box } from "@mui/material";
 import Header from "../../components/Header";
-import LineChart from "../../components/LineChart";
-import { tokens } from "../../theme";
+import MachineChart from "../../components/MachineChart";
 
 const Dashboard = () => {
-  const theme = useTheme();
-  const colors = tokens(theme.palette.mode);
-
   return (
     <Box m="20px">
-      {/* HEADER */}
       <Box display="flex" justifyContent="space-between" alignItems="center">
-        <Header title="DASHBOARD" />
+        <Header title="Dashboard" />
       </Box>
 
-      {/* GRID & CHARTS */}
-      <Box
-        display="grid"
-        gridTemplateColumns="repeat(12, 1fr)"
-        gridAutoRows="140px"
-        gap="20px"
-      >
-        {/* ROW 1 */}
-
-        <Box
-          gridColumn="span 8"
-          gridRow="span 2"
-          backgroundColor={colors.primary[400]}
-        >
-          <Box
-            mt="25px"
-            p="0 30px"
-            display="flex "
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Box>
-              <Typography
-                variant="h3"
-                fontWeight="800"
-                color={colors.grey[100]}
-              >
-                Virtual Machine 0
-              </Typography>
-              {/* <Typography
-                variant="h3"
-                fontWeight="bold"
-                color={colors.greenAccent[500]}
-              >
-                $59,342.32
-              </Typography> */}
-            </Box>
-            <Box>
-              <IconButton>
-                <DownloadOutlinedIcon
-                  sx={{ fontSize: "26px", color: colors.greenAccent[500] }}
-                />
-              </IconButton>
-            </Box>
-          </Box>
-          <Box height="250px" m="-20px 0 0 0">
-            <LineChart isDashboard={true} />
-          </Box>
-        </Box>
-
-        {/*Row 2*/}
-
-        <Box
-          gridColumn="span 8"
-          gridRow="span 2"
-          backgroundColor={colors.primary[400]}
-        >
-          <Box
-            mt="25px"
-            p="0 30px"
-            display="flex "
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Box>
-              <Typography
-                variant="h3"
-                fontWeight="800"
-                color={colors.grey[100]}
-              >
-                Virtual Machine 1
-              </Typography>
-              {/* <Typography
-                variant="h3"
-                fontWeight="bold"
-                color={colors.greenAccent[500]}
-              >
-                $59,342.32
-              </Typography> */}
-            </Box>
-            <Box>
-              <IconButton>
-                <DownloadOutlinedIcon
-                  sx={{ fontSize: "26px", color: colors.greenAccent[500] }}
-                />
-              </IconButton>
-            </Box>
-          </Box>
-          <Box height="250px" m="-20px 0 0 0">
-            <LineChart isDashboard={true} />
-          </Box>
-        </Box>
-      </Box>
+      <MachineChart hostname="ubuntu-plain-vm" machine_id="fe14c4bc6c112596fdfa1bbb64572fa7"></MachineChart>
+      <MachineChart hostname="ubuntu-malicious-vm" machine_id="4b2562e9fa6c4834bce25a92ec467804"></MachineChart>
     </Box>
   );
 };

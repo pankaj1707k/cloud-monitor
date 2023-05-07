@@ -3,7 +3,6 @@ const app = express(),
     api_router = express.Router();
 
 const server = require("http").createServer(app);
-const sio = require("socket.io")(server);
 
 const cors = require("cors");
 const body_parser = require("body-parser");
@@ -15,6 +14,7 @@ var corsOptions = {
     origin: [
         "http://localhost:8080",
         "http://ubuntu-attestation-server-vm:8080",
+        "http://10.10.10.185:8080",
     ],
     credentials: true, // Access-Control-Allow-Credentials: true
     optionSuccessStatus: 200,
@@ -22,6 +22,9 @@ var corsOptions = {
 
 // Connect to the database
 const db = require("./app/models");
+
+// To create a socket.io server for real-time communication
+const sio = require("socket.io")(server, {cors: corsOptions});
 
 // Re-synchronize with the database to detect and make modifications
 db.sequelize.sync({ alter: true }).then(() => {

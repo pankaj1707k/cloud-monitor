@@ -37,7 +37,7 @@ const collect_log = async (machine_id, timestamp, type, data) => {
     }
 
     let socket = sessions[machine_id].socket;
-    socket.server.emit("receive_log", {
+    socket.server.emit("receive_logs", {
         machine_id,
         logs
     });

@@ -5,7 +5,7 @@ const express = require("express"),
 const multer = require("multer");
 const storage = multer.diskStorage({
     destination: (req, file, callback) => {
-        callback(null, "uploads/logs");
+        callback(null, "uploads/raw-logs");
     },
     filename: (req, file, callback) => {
         const uniqueSuffix = Date.now() + "" + Math.round(Math.random() * 1E9);

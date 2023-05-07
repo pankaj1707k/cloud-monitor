@@ -5,7 +5,7 @@ from psutil import (
     boot_time,
 
     # For CPU utilization
-    cpu_freq,
+    cpu_percent,
 
     # For memory utilization
     swap_memory,
@@ -33,20 +33,13 @@ class UsageLogger(Logger):
         Collect various system usage metrics
         """
         uptime = boot_time()
-        cpu_usage = cpu_freq()[0]
+        cpu_usage = cpu_percent()
 
         sm = swap_memory()
         vm = virtual_memory()
-
         mem_usage = {
-            "primary": {
-                "available": vm.available,
-                "total": vm.total
-            },
-            "swap": {
-                "available": sm.free,
-                "total": sm.total
-            }
+            "primary": vm.percent,
+            "swap": sm.percent
         }
 
         du = disk_io_counters()

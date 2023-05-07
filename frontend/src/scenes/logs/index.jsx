@@ -1,5 +1,5 @@
 import { Box, useTheme } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import Header from "../../components/Header";
 import { tokens } from "../../theme";
@@ -9,12 +9,12 @@ const Logs = () => {
   const colors = tokens(theme.palette.mode);
 
   var [logs, setLogs] = useState([]);
-
-  const API_URL = "http://localhost:8000/api/log/get";
+  const API_URL = "http://10.10.10.185:3000/api/log/get?size=999&sort_order=DESC";
 
   useEffect(() => {
     async function getLogs() {
-      const result = await fetch(API_URL);
+      const result = (await (await fetch(API_URL)).json()).data;
+
       if (!ignore) {
         setLogs(result);
       }
@@ -25,21 +25,22 @@ const Logs = () => {
     return () => {
       ignore = true;
     };
-  }, [logs]);
+  }, []);
 
   const columns = [
-    { field: "machine_id", headerName: "Machine ID", flex: 0.5 },
-    { field: "log_filepath", headerName: "Log file" },
+    { field: "machine_id", headerName: "Machine ID", flex: 0.25 },
+    { field: "log_filepath", headerName: "Log file", flex: 0.25 },
     {
       field: "timestamp",
       headerName: "Timestamp",
       type: "number",
-      headerAlign: "left",
+      align: "left",
+      flex: 0.125,
     },
     {
       field: "type",
       headerName: "Type",
-      flex: 1,
+      flex: 0.2,
       align: "left",
     },
     {
@@ -79,9 +80,16 @@ const Logs = () => {
           "& .MuiCheckbox-root": {
             color: `${colors.greenAccent[200]} !important`,
           },
+          "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
+            color: `${colors.grey[100]} !important`,
+          },
         }}
       >
-        <DataGrid rows={logs} columns={columns} />
+        <DataGrid
+          rows={logs}
+          columns={columns}
+          components={{ Toolbar: GridToolbar }}
+        />
       </Box>
     </Box>
   );

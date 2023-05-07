@@ -9,12 +9,12 @@ const Events = () => {
   const colors = tokens(theme.palette.mode);
 
   var [events, setEvents] = useState([]);
-
-  const API_URL = "http://localhost:8000/api/event/get";
+  const API_URL = "http://10.10.10.185:3000/api/event/get?size=999&sort_order=DESC";
 
   useEffect(() => {
     async function getEvents() {
-      const result = await fetch(API_URL);
+      const result = (await (await fetch(API_URL)).json()).data;
+
       if (!ignore) {
         setEvents(result);
       }
@@ -25,21 +25,22 @@ const Events = () => {
     return () => {
       ignore = true;
     };
-  }, [events]);
+  }, []);
 
   const columns = [
-    { field: "machine_id", headerName: "Machine ID", flex: 0.5 },
-    { field: "log_filepath", headerName: "Log file" },
+    { field: "machine_id", headerName: "Machine ID", flex: 0.25 },
+    { field: "log_filepath", headerName: "Log file", flex: 0.25 },
     {
       field: "timestamp",
       headerName: "Timestamp",
       type: "number",
-      headerAlign: "left",
+      align: "left",
+      flex: 0.125,
     },
     {
       field: "type",
       headerName: "Type",
-      flex: 1,
+      flex: 0.2,
       align: "left",
     },
     {
@@ -51,7 +52,7 @@ const Events = () => {
 
   return (
     <Box m="20px">
-      <Header title="EVENTS" />
+      <Header title="Events" />
       <Box
         m="40px 0 0 0"
         height="75vh"

@@ -18,7 +18,7 @@ class Parser(ABC):
     def __init__(self, filepath: str) -> None:
         # Raise error if the log file doesn't exist
         if not os.path.isfile(filepath):
-            raise ParseError(msg=f"Log file '{self.filepath}' does not exist.")
+            raise ParseError(msg=f"Log file '{filepath}' does not exist.")
 
         # Store the state of parser
         self._running: bool = True
