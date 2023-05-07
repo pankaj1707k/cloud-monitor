@@ -1,6 +1,6 @@
 // Store socket.io sessions, machine-id -> socket
 const sessions = {};
-const LOGS_WINDOW = 30;
+const LOGS_WINDOW = 16;
 
 const handle_socket = async (socket) => {
     // Save the socket
@@ -33,6 +33,11 @@ const collect_log = async (machine_id, timestamp, type, data) => {
         if (current_timestamp - first_timestamp <= LOGS_WINDOW)
             break;
 
+        delete logs[first_timestamp];
+    }
+
+    while (Object.keys(logs).length > LOGS_WINDOW) {
+        let first_timestamp = Object.keys(logs)[0];
         delete logs[first_timestamp];
     }
 
