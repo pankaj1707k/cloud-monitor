@@ -48,6 +48,29 @@ Requires:
 
 - `node v18.16.0 (LTS)`
 - See `package.json` for all dependencies.
+- PostgreSQL Database
+  - On Linux (Debian), install using `sudo apt install postgresql-X`
+
+    Where `X` is the major version number like: `postgresql-14`, `postgresql-15`
+
+    Start the database, configure user credentials to access the database as follows:
+    ```bash
+    # Create the database
+    sudo -u postgres createdb -e cec-term-project-group-8
+
+    # Change the password for 'postgres' user
+    # Connect to the database, 'postgres' user is allowed without authentication
+    sudo -u postgres psql
+
+    # Change the password by entering '\password'
+    \password
+    
+    # Connect to the database, enter the password on prompt
+    psql -U postgres cec-term-project-group-8
+
+    # Set the configured '<username>:<password>' and the database name in the '.env' file.
+    DATABASE_URL="postgres://postgres:p4ssw0rd@localhost/cec-term-project-group-8"
+    ```
 
 Setup process:
 

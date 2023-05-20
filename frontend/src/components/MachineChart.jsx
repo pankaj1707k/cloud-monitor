@@ -18,10 +18,10 @@ const MachineChart = ({ hostname = "", machine_id}) => {
       >
         <LineChart machine_id={machine_id} title="CPU" path="cpu" yMin={0} yMax={100}></LineChart>
         <LineChart machine_id={machine_id} title="Memory" path="memory.primary" yMin={0} yMax={100}></LineChart>
-        <LineChart machine_id={machine_id} title="Disk (read)" unit="B/s" path="disk.read_bytes"></LineChart>
-        <LineChart machine_id={machine_id} title="Disk (write)" unit="B/s" path="disk.write_bytes"></LineChart>
-        <LineChart machine_id={machine_id} title="Network (sent)" unit="B/s" path="network.bytes_sent"></LineChart>
-        <LineChart machine_id={machine_id} title="Network (recv)" unit="B/s" path="network.bytes_recv"></LineChart>  
+        <LineChart machine_id={machine_id} title="Disk (read)" is_bytes={true} path="disk.read_bytes"></LineChart>
+        <LineChart machine_id={machine_id} title="Disk (write)" is_bytes={true} path="disk.write_bytes"></LineChart>
+        <LineChart machine_id={machine_id} title="Network (sent)" is_bytes={true} path="network.bytes_sent"></LineChart>
+        <LineChart machine_id={machine_id} title="Network (recv)" is_bytes={true} path="network.bytes_recv"></LineChart>  
       </Box>
     </Box>
   );

@@ -3,13 +3,17 @@ import { ResponsiveLine } from "@nivo/line";
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import { tokens } from "../theme";
+import { HOST } from "../globals";
+import {partial} from "filesize";
+const size = partial({base: 2, standard: "jedec"});
 
-const LineChart = ({ machine_id, title, unit = "", path = "", isDashboard = false, yMin = "auto", yMax = "auto"}) => {
+const LineChart = ({ machine_id, title, is_bytes = false, path = "", isDashboard = false, yMin = "auto", yMax = "auto"}) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
-  const URL = "http://10.10.10.185:3000";
+  const URL = `${HOST}`;
   var [data, setData] = useState([]);
+  var [_title, setTitle] = useState(title);
 
   useEffect(() => {
     const socket = io(URL);
@@ -19,6 +23,9 @@ const LineChart = ({ machine_id, title, unit = "", path = "", isDashboard = fals
 
       var logs = data.logs;      
       let prev = logs[Object.keys(logs)[0]].data.timestamp;
+
+      // For use, when `is_bytes = true`
+      var max_bytes = 0;
 
       var d = [{
         id: path,
@@ -36,10 +43,25 @@ const LineChart = ({ machine_id, title, unit = "", path = "", isDashboard = fals
             d.y = d.y[s];
           }
 
-          d.y = `${d.y} ${unit}`;
+          d.y = parseFloat(d.y);
+          max_bytes = Math.max(d.y, max_bytes);
           return d;
         }),
       }];
+
+      if (is_bytes) {
+        let div = Math.pow(1024, Math.floor(Math.log2(max_bytes) / 10));
+        let N = d[0].data.length;
+        
+        let speed = size(d[0].data[N - 1].y);
+        let new_title = `${_title} - ${speed}/s`;
+        setTitle(new_title);
+
+        for (let i = 0; i < N; i++) {
+          d[0].data[i].y /= div;
+        }
+      }
+
       setData(d);
     });
 
@@ -65,7 +87,7 @@ const LineChart = ({ machine_id, title, unit = "", path = "", isDashboard = fals
             fontWeight="800"
             color={colors.grey[100]}
           >
-            {title}
+            {_title}
           </Typography>
         </Box>
       </Box>

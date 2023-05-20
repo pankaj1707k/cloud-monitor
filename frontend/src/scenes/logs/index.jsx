@@ -3,13 +3,14 @@ import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import Header from "../../components/Header";
 import { tokens } from "../../theme";
+import { HOST } from "../../globals";
 
 const Logs = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
   var [logs, setLogs] = useState([]);
-  const API_URL = "http://10.10.10.185:3000/api/log/get?size=999&sort_order=DESC";
+  const API_URL = `${HOST}/api/log/get?size=999&sort_order=DESC`;
 
   useEffect(() => {
     async function getLogs() {

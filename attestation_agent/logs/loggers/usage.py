@@ -28,20 +28,11 @@ class UsageLogger(Logger):
 
     type = "USAGE"
 
-    def _collect_log(self) -> dict:
-        """
-        Collect various system usage metrics
-        """
-        uptime = boot_time()
-        cpu_usage = cpu_percent()
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self._data = self._record_io_data()
 
-        sm = swap_memory()
-        vm = virtual_memory()
-        mem_usage = {
-            "primary": vm.percent,
-            "swap": sm.percent
-        }
-
+    def _record_io_data(self) -> dict[str, dict[str,int]]:
         du = disk_io_counters()
         disk_usage = {
             "read_count": du.read_count,
@@ -59,6 +50,38 @@ class UsageLogger(Logger):
             "packets_recv": nu.packets_recv
         }
 
+        data = {
+            "disk": disk_usage,
+            "network": network_usage,
+        }
+        return data
+
+    def _collect_log(self) -> dict:
+        """
+        Collect various system usage metrics
+        """
+        uptime = boot_time()
+        cpu_usage = cpu_percent()
+
+        sm = swap_memory()
+        vm = virtual_memory()
+        mem_usage = {
+            "primary": vm.percent,
+            "swap": sm.percent
+        }
+
+        # Record IO data
+        current_data = self._record_io_data()
+
+        data = {
+            category: {
+                key: current_data[category][key] - self._data[category][key]
+                for (key, value) in self._data[category].items()
+            } for category in current_data
+        }
+
+        self._data = current_data
+
         # NOTE: We are using VMs, they don't have any physical batteries (but virtual)
         #battery_percentage = sensors_battery().percent
         battery_percentage = 100
@@ -68,13 +91,12 @@ class UsageLogger(Logger):
         #avg_temperature = sum(map(lambda temp: temp.current, temperatures)) / len(temperatures)
         avg_temperature = 25.0
 
-        return {
+        log = {
             "timestamp": int(time.time()),
             "uptime": uptime,
             "battery": battery_percentage,
             "cpu": cpu_usage,
-            "memory": mem_usage,
-            "disk": disk_usage,
-            "network": network_usage,
-            "temperature": avg_temperature,
+            "memory": mem_usage
         }
+        log.update(data)
+        return log
