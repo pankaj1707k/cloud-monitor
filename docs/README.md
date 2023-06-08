@@ -82,12 +82,13 @@ Setup process:
   - `DATABASE_URL`
   - `PORT`
 - Start server: `$ node app.js`
+- The server should now be running on `PORT` port (default=3000).
 
 ### Attestation agent
 
 Requires:
 
-- `python v3.9+`
+- `python v3.10+`
 - `python-socketio v5.8.0`
 - `requests v2.29.0`
 
@@ -114,8 +115,21 @@ Requires:
 
 Setup process:
 
-- Clone the `frontend` directory on some machine (can be same as the attestation server).
+- Clone the `frontend` directory on some machine (can be same as the attestation server)
+  and navigate inside it.
 - Install required dependencies:
   `$ npm install`
   - If this does not work due to mismatched versions, use: `$ npm install --legacy-peer-deps`
 - Start server: `$ npm start`
+- The frontend should now be running on port `8080`.
+
+**Note**:
+
+- This has been tested on Ubuntu Server 22.04 instances, independent
+  from the openstack infrastructure. Running this on openstack requires some
+  additional configurations which are specific to managing instances on the
+  infrastructure itself.
+- The attestation agent runs completely in user mode. On Ubuntu server, reading
+  log files does not require `sudo` privileges. However, running this on other
+  servers such as CentOS, Fedora, etc., may require modifying read permissions
+  for the log files specified in `attestation_agent/config.py`.
