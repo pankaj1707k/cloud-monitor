@@ -133,3 +133,15 @@ Setup process:
   log files does not require `sudo` privileges. However, running this on other
   servers such as CentOS, Fedora, etc., may require modifying read permissions
   for the log files specified in `attestation_agent/config.py`.
+
+### Preview
+#### Setup
+![setup](./images/setup.png)
+
+#### Activity Logging
+![activity-logging](./images/activity-logging.png)
+
+#### Usage Monitoring
+![usage-monitor-start](./images/usage-monitor-start.png)
+![usage-monitor-ongoing](./images/usage-monitor-ongoing.png)
+![usage-monitor-end](./images/usage-monitor-end.png)
