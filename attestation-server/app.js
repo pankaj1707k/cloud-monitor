@@ -13,7 +13,7 @@ require("dotenv").config();
 var corsOptions = {
     origin: [
         "http://localhost:8080",
-        "http://ubuntu-attestation-server-vm:8080",
+        "http://ubuntu-vm:8080",
         "http://10.10.10.185:8080",
     ],
     credentials: true, // Access-Control-Allow-Credentials: true

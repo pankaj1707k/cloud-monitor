@@ -9,8 +9,8 @@ const Dashboard = () => {
         <Header title="Dashboard" />
       </Box>
 
-      <MachineChart hostname="ubuntu-plain-vm" machine_id="fe14c4bc6c112596fdfa1bbb64572fa7"></MachineChart>
-      <MachineChart hostname="ubuntu-malicious-vm" machine_id="4b2562e9fa6c4834bce25a92ec467804"></MachineChart>
+      <MachineChart hostname="ubuntu-plain-vm" machine_id="4b2562e9fa6c4834bce25a92ec467804"></MachineChart>
+      {/* <MachineChart hostname="ubuntu-malicious-vm" machine_id="4b2562e9fa6c4834bce25a92ec467804"></MachineChart> */}
     </Box>
   );
 };

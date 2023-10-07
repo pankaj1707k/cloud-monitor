@@ -1,72 +1,69 @@
 import { Box, Typography, useTheme } from "@mui/material";
 import { ResponsiveLine } from "@nivo/line";
-import { useEffect, useState } from "react";
-import { io } from "socket.io-client";
 import { tokens } from "../theme";
-import { HOST } from "../globals";
-import {partial} from "filesize";
+import { partial } from "filesize";
+
 const size = partial({base: 2, standard: "jedec"});
 
-const LineChart = ({ machine_id, title, is_bytes = false, path = "", isDashboard = false, yMin = "auto", yMax = "auto"}) => {
+const LineChart = ({ data, title, is_bytes = false, path = "", isDashboard = false, yMin = "auto", yMax = "auto" }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
-  const URL = `${HOST}`;
-  var [data, setData] = useState([]);
-  var [_title, setTitle] = useState(title);
+  var lineData = [];
+  var titleSuffix = "";
 
-  useEffect(() => {
-    const socket = io(URL);
+  function parseData(data) {
+    if (data?.logs == undefined) return [];
 
-    socket.on("receive_logs", (data) => {
-      if (data.machine_id != machine_id) return;
+    var logs = data.logs;
+    let timeOffset = logs[Object.keys(logs)[0]].data.timestamp;
 
-      var logs = data.logs;      
-      let prev = logs[Object.keys(logs)[0]].data.timestamp;
+    // For use, when `is_bytes = true`
+    var max_bytes = 0;
 
-      // For use, when `is_bytes = true`
-      var max_bytes = 0;
+    var d = [{
+      id: path,
+      data: Object.keys(logs).map(timestamp => {
+        let d = {
+          x: timestamp - timeOffset,
+          y: logs[timestamp].data
+        };
 
-      var d = [{
-        id: path,
-        data: Object.keys(logs).map(timestamp => {
-          let d = {
-            x: timestamp - prev,
-            y: logs[timestamp].data
-          };
+        if (path === null || path === "") return d;
 
-          if (path === null || path === "") return d;
-    
-          let sub = path.split(".");
-    
-          for (let s of sub) {
-            d.y = d.y[s];
-          }
+        let sub = path.split(".");
 
-          d.y = parseFloat(d.y);
-          max_bytes = Math.max(d.y, max_bytes);
-          return d;
-        }),
-      }];
+        for (let s of sub) {
+          d.y = d.y[s];
+        }
 
-      if (is_bytes) {
-        let div = Math.pow(1024, Math.floor(Math.log2(max_bytes) / 10));
+        d.y = parseFloat(d.y);
+        max_bytes = Math.max(d.y, max_bytes);
+        return d;
+      }),
+    }];
+
+    if (is_bytes) {
+      let div = Math.pow(1024, Math.floor(Math.log2(max_bytes) / 10));
+
+      if (div == 0) {
+        yMax = Infinity;
+      }
+      else {
         let N = d[0].data.length;
-        
         let speed = size(d[0].data[N - 1].y);
-        let new_title = `${_title} - ${speed}/s`;
-        setTitle(new_title);
+        titleSuffix = `- ${speed}/s`;
 
         for (let i = 0; i < N; i++) {
           d[0].data[i].y /= div;
         }
       }
+    }
 
-      setData(d);
-    });
+    return d;
+  }
 
-    return () => socket.disconnect();
-  }, []);
+  lineData = parseData(data);
 
   return (<>
   <Box
@@ -87,14 +84,14 @@ const LineChart = ({ machine_id, title, is_bytes = false, path = "", isDashboard
             fontWeight="800"
             color={colors.grey[100]}
           >
-            {_title}
+            {title + titleSuffix}
           </Typography>
         </Box>
       </Box>
       <Box height="240px" m="-20px 0 0 20px">
         <ResponsiveLine
           animate={false}
-          data={data}
+          data={lineData}
           theme={{
             axis: {
               domain: {
